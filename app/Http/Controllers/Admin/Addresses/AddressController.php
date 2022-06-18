@@ -34,7 +34,7 @@ class AddressController extends Controller
      private $cityRepo = new CityRepository;
 
 
-    /**Então criamso um crustuor, que pede como parâmetro esses repositóriods */
+    /**Então criamos um crustuor, que pede como parâmetro esses repositóriods */
     /**E jogamso cada um desse repositório, para nossa classe cirada.
      * O único que não precisa ser privado é o province.
      */
@@ -55,21 +55,29 @@ class AddressController extends Controller
    
 
     /**View referente a rota index
-     * pega a lista de todos os address, usando como ordem a data de criação, 
-     * de forma descrecente. E joga de de uma variável. Obiviamente usa o addresRepo
+     * cria uma lista que contem todos os address. Ela usa a função listAddress, do
+     * address repo que faz parte de nossa classe. ele irá buscar pela, data de criação
+     * em ordem descrecente. 
      * 
-     * Veririca se o request tem a letra 'q'. Se tiver - a lista será um único addres.
+     * Veririca se o request tem a letra 'q'. Se tiver - {não usaremos o listAddress, ou sejá, 
+     * não retornará todos addres. Usaremos a função serachAddress, que necessitará de um 
      * vai buscar um único address, no repo, e vai usar os dados envidos através do q
      * Ou sejá vai recuperar os dados do q, envido no resquets.
      * 
      * Então iremos mapear o array com lista de enderçoes. A função de callback será objeto addres
-     * E iresmo para cada address, tranformar ele, usando o método transofrmAddress. 
+     * Então iremos para cada address, tranformar ele, usando o método transofrmAddress. 
      * Certificaremos que vamos fazer isso com todos, e vamso jogar dentro da variável addreeses
      * 
      */
-    public function index()
+    public function index(Request $request)
     {
-        $list = 
+        $addressRepo = new AddressRepository;
+        $listAddress = $addressRepo->findAll('created_at', 'desc');
+
+        if($request->has('q')){
+            $listAddress = $addressRepo->serachOne($request->input('q'));
+            $listAddress->map(new Address)
+        }
     }
     
 
