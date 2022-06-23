@@ -23,35 +23,37 @@ class AddressController extends Controller
     /**Iremo usar a classe Addres, então já "instalamos" ela aqui */
     use App\Shop\Addresses\Address;
 
+
     /**Defiimos algumas variáveis que serão privadas. Elas que são privadas, porque
      * consegue alterar coisas no banco de dados. São os repositórios.
-     * São eles: Repository - Addres, custom, country e city.
+     * São eles: Repository - Addres, custom, country, city e province.
      */
 
-     private $addressRepo = new AddressRepository;
-     private $customsRepo = new CustomRepository;
-     private $countryRepo = new CountryRepository;
-     private $cityRepo = new CityRepository;
+    private $addressRepo;
+    private $customerRepo;
+    private $contryRepo;
+    private $cityRepo;
 
 
     /**Então criamos um crustuor, que pede como parâmetro esses repositóriods */
     /**E jogamso cada um desse repositório, para nossa classe cirada.
-     * O único que não precisa ser privado é o province.
      */
 
-     public function __construct(
+    public function __construct(
         AddressRepository $addressRepo,
-        CustomRepository $customRepo,
-        CountryRepository $countryRepo,
         CityRepository $cityRepo,
+        CountryRepository $countryRepo,
+        CustomRepository $customRepo,
         ProvinceRepository $provinceRepo,
-     ){
+    ){
         $this->addressRepo = $addressRepo;
-        $this->customRepo = $customRepo;
-        $this->countryRepo = $countryRepo;
         $this->cityRepo = $cityRepo;
+        $this->countryRepo = $countryRepo;
+        $this->customRepo = $customRepo;
         $this->provinceRepo = $provinceRepo;
-     }
+    }
+
+
    
 
     /**View referente a rota index
@@ -69,28 +71,35 @@ class AddressController extends Controller
      * Certificaremos que vamos fazer isso com todos, e vamso jogar dentro da variável addreeses
      * 
      */
-    public function index(Request $request)
-    {
-        $addressRepo = new AddressRepository;
-        $listAddress = $addressRepo->findAll('created_at', 'desc');
 
-        if($request->has('q')){
-            $listAddress = $addressRepo->serachOne($request->input('q'));
-            $listAddress->map(new Address)
-        }
-    }
+     public function index(Request $request)
+     {
+        $list = $this->addressRepo()->listAddress('created_at', 'desc');
+
+        if ($request->has('q')){
+            $list = $this->addressRepo()->serachAddress($request->input('q'));
+        } 
+
+        $list->map($address, function (Address $address){
+            $addresses = $this->transofrmAddress($address);
+        });
+
+        return view('addresses', ["addresses" => $this->addressRepo()->paginateArrayResuts($addresses)]);
+
+     }
+   
     
 
-        /**retorna, a view do admin, addreses, list,
-         * Tem retonarmso o contexto em uma lista. Basicmaente tornoamso o addresses.
-         * Mas jogadores ele dentro da função, paginateArrayResults, que é do addresRepo.
-         * Que importamos na em cima. e Enviaremos isso como nome "addreses", dentro de um dicionários.
-         */
+    /**retorna, a view do admin, addreses, list,
+     * Tem retonarmso o contexto em uma lista. Basicmaente tornoamso o addresses.
+     * Mas jogadores ele dentro da função, paginateArrayResults, que é do addresRepo.
+     * Que importamos na em cima. e Enviaremos isso como nome "addreses", dentro de um dicionários.
+     */
+
 
     
     
     
-    }
-
+    
 
 }
