@@ -28,7 +28,23 @@ class ProductController extends Controller
 
         return view('front.products.product-search', [
             'products' => $this->productRepo->paginateArrayResults($products->all(), 10)
-        ])
+        ]);
+    }
+
+    public function show(string $slug)
+    {
+        $product = $this->productRepo->findProductBySlug(['slug' => $slug]);
+        $images = $product->imagens()->get();
+        $category = $product->categories()->first();
+        $productAttributes = $product->attributes;
+
+        return view('front.products.products', compact(
+            'product',
+            'imagens',
+            'productAttributes',
+            'category'
+        ));
+
     }
 
 }
