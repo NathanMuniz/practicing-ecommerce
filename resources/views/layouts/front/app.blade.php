@@ -45,9 +45,74 @@
     @yield('css')
     <meta propety="og:url" content="{{ request()->url }}"/>
     @yield('og')
+    <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js') }}"></script>
 
 </head>
 <body>
+<noscript>
+    <!-- Sessão que só ira funcinar se o JS da página estiver desativado -->
+    <p class="alert alert-danger">
+        You need to turn your javascript. Some functionality will not work if this is disabled.
+        <a href="http://www.anable-javascript.com/" target="_blank">Read more</a>
+    </p>
+</noscript>
+
+<section>
+    <div class="hidden-xs">
+        <div class="container">
+            <div class="clearfix"></div>
+            <div class="pull-right">
+<!-- Prática de Navbar -->
+                <ul class="nav nav-bar">
+                    <!-- Checar se usuário está logado -->
+                    @if(auth()->check())
+                        <li><a href=" {{ route('account', ['tab' => 'tabname']]) }} "><i class="fa fa-home"></i>My Account</a></li>
+                        <li><a href=" {{ route('logout') }} "><i class="fa-sig-out"></i>Logout</a></li>
+                    @else 
+                        <li><a href="{{ route('login') }}"><i class="fa-sigin"></i>Login</a></li>
+                        <li><a href="{{ route('register') }}"><i class="fa-sing-register"></i>Register</a></li>
+                    @endif 
+                    <!-- Link do para entrar no carrinho. Ele terá uma id e uma classe. Dentro desse
+                    li, terá um link, que será um redirect para view cart. Dentro do link, terá o icone de cart,
+                    e terá  a contragem de coisas no carrinho em um span. Você usa a varia´vel cartCout para trazer. -->
+                    <li id="cart" class="cart">
+                        <a href="{{ route('view.cart') }}">
+                            <i class="fa-cart"></i>
+                            <span>{{ $cartCout }}</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <header id="header-section">
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <!-- Brand and toggle get gouped for mobile display -->
+                <div>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="coppapse" data-target="$b5-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navtion</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ route('home') }}">{{ config('app.name') }}></a>
+                </div>
+                <div class="col-md-10">
+                    @include('layouts.front.header-cart')
+                </div>
+            </div>
+        </nav>
+    </header>
+</section>
+@yield('content')
+
+@include('layouts.front.footer')
+
+<script src="{{ asset('js/front.min.js') }}"></script>
+<script src=" {{ asset('js/custom.js') }} "></script>
+@yild('js')
     
 </body>
 </html>
